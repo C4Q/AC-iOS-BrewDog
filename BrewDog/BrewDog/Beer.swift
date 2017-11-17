@@ -15,6 +15,11 @@ class Beer {
     let beerDescription: String
     let imageUrlString: String
     
+    var sectionName: String {
+        let wholePercent = Int(abv)
+        return "\(wholePercent).0% - \(wholePercent).9%"
+    }
+    
     init(name: String, tagline: String, abv: Double, beerDescription: String, imageUrlString: String) {
         self.name = name
         self.tagline = tagline
@@ -24,7 +29,6 @@ class Beer {
     }
     
     convenience init?(from dict: [String: Any]) {
-        
         guard
             let name = dict["name"] as? String,
             let tagline = dict["tagline"] as? String,
@@ -42,7 +46,8 @@ class Beer {
         var beerList: [Beer] = []
         
         do {
-            guard let beerJSONArray = try JSONSerialization.jsonObject(with: data, options: []) as? [[String: Any]] else { return nil }
+            guard let beerJSONArray = try JSONSerialization.jsonObject(with: data, options: []) as? [[String: Any]]
+                else { return nil }
             for beerDict in beerJSONArray {
                 if let thisBeer = Beer(from: beerDict) {
                     beerList.append(thisBeer)

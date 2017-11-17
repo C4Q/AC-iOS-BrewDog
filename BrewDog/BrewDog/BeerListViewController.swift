@@ -16,6 +16,12 @@ class BeerListViewController: UIViewController {
     
     var beerList: [Beer] = []
     
+    var sectionNames: [String] = []
+    
+    func beersInSection(_ section: Int) -> [Beer] {
+        return beerList.filter { $0.sectionName == sectionNames[section] }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
@@ -27,13 +33,28 @@ class BeerListViewController: UIViewController {
         apiManager.getData(endpoint: beerEndpoint) { (data: Data?) in
             if let myData = data {
                 if let thisBeerList = Beer.createArrayOfBeer(from: myData) {
-                    self.beerList = thisBeerList
+                    
+                    self.beerList = thisBeerList.sorted(by: { (a, b) -> Bool in
+                        a.abv < b.abv
+                    })
+                    
+                    self.getSectionNames()
+                    
                     DispatchQueue.main.async {
                         self.tableView.reloadData()
                     }
                 }
             }
         }
+    }
+    
+    func getSectionNames() {
+        for beer in beerList {
+            if !sectionNames.contains(beer.sectionName) {
+                sectionNames.append(beer.sectionName)
+            }
+        }
+        print(sectionNames)
     }
     
     
@@ -72,27 +93,38 @@ class BeerListViewController: UIViewController {
             else {
                 return
         }
-        let thisBeer = beerList[thisIndexPath.row]
+        
+        let beersInSection = self.beersInSection(thisIndexPath.section)
+        let thisBeer = beersInSection[thisIndexPath.row]
         beerDVC.beer = thisBeer
     }
+    
+    
+    
 }
 
 extension BeerListViewController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return sectionNames.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return beerList.count
+        return beersInSection(section).count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "beerCell", for: indexPath)
-        let thisBeer = beerList[indexPath.row]
+        
+        let beersInThisSection = beersInSection(indexPath.section)
+        let thisBeer = beersInThisSection[indexPath.row]
         cell.textLabel?.text = thisBeer.name
-        cell.detailTextLabel?.text = "\(thisBeer.abv)%"
+        cell.detailTextLabel?.text = thisBeer.sectionName //"\(thisBeer.abv)%"
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return sectionNames[section]
     }
 }
 

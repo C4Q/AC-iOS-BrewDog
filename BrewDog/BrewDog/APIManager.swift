@@ -9,7 +9,6 @@
 import Foundation
 
 class APIManager {
-    
     func getData(endpoint: String, completionHandler: @escaping (Data?)->()) {
         guard let url = URL(string: endpoint) else { return }
         let request = URLRequest(url: url)
@@ -24,5 +23,4 @@ class APIManager {
         }
         task.resume()
     }
-    
 }
