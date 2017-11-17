@@ -9,6 +9,11 @@
 import Foundation
 
 class APIManager {
+    
+    static let thisSingleton = APIManager()
+    
+    private init() {}
+    
     func getData(endpoint: String, completionHandler: @escaping (Data?)->()) {
         guard let url = URL(string: endpoint) else { return }
         let request = URLRequest(url: url)

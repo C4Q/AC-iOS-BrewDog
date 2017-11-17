@@ -29,8 +29,8 @@ class BeerListViewController: UIViewController {
     }
     
     func getData() {
-        let apiManager = APIManager()
-        apiManager.getData(endpoint: beerEndpoint) { (data: Data?) in
+        
+        APIManager.thisSingleton.getData(endpoint: beerEndpoint) { (data: Data?) in
             if let myData = data {
                 if let thisBeerList = Beer.createArrayOfBeer(from: myData) {
                     

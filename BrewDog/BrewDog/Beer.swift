@@ -48,6 +48,7 @@ class Beer {
         do {
             guard let beerJSONArray = try JSONSerialization.jsonObject(with: data, options: []) as? [[String: Any]]
                 else { return nil }
+            
             for beerDict in beerJSONArray {
                 if let thisBeer = Beer(from: beerDict) {
                     beerList.append(thisBeer)

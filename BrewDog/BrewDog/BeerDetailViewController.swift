@@ -30,8 +30,7 @@ class BeerDetailViewController: UIViewController {
     
     
     func getImage() {
-        let apiManager = APIManager()
-        apiManager.getData(endpoint: beer.imageUrlString) { (data: Data?) in
+        APIManager.thisSingleton.getData(endpoint: beer.imageUrlString) { (data: Data?) in
             if let data = data {
                 DispatchQueue.main.async {
                     self.beerImageView.image = UIImage(data: data)
